@@ -1,0 +1,14 @@
+{ "locations":
+[{"id": 0,
+  "lat": 31.540,
+  "lng": 35.546,
+  "title": "hello world!",
+  "info": "this is some info"
+},
+  {"id": 1,
+    "lat": 32,
+    "lng": 35,
+    "title": "another one!",
+    "info": "this is some more info"
+  }]
+}
