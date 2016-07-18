@@ -5,7 +5,6 @@ function initMap() {
             zoom: 8
         });
         var infoWindow = new google.maps.InfoWindow({map: map});
-        var myLatLng = {lat: 32.071006, lng: 34.761871}; //TODO load json with list of places
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             var pos = {
@@ -21,25 +20,29 @@ function initMap() {
           handleLocationError(false, infoWindow, map.getCenter());
         }
 
-        //TODO move to constants file and get from json
-        var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h3 id="firstHeading" class="firstHeading">'+'Artist'+'</h3>'+
-            '<div id="bodyContent">'+
-            'This is some info'+
-            '</div>'+
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-        var marker = new google.maps.Marker({ //TODO for loop on the locations
-          position: myLatLng,
-          map: map,
-          title: 'Hello World!'
-        });
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
+/*** ADDING LOCATIONS TO MAP ***/
+        var contentString = ''
+        $.getJSON("locations.json", function(json) {
+              json.locations.forEach(function(element){
+                var latLng = {lat: element.lat, lng: element.lng};
+                contentString = '<div id="content">'+
+                    '<div id="content_'+element.id+'">'+
+                    '</div>'+
+                    '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
+                    '<div id="bodyContent'+element.id+'">'+ element.info +
+                    '</div>'+
+                    '</div>';
+                var infoWindow = new google.maps.InfoWindow({
+                  content: contentString
+                });
+                var marker = new google.maps.Marker({
+                  position: latLng,
+                  map: map,
+                  title: element.title
+                });
+                marker.addListener('click', function() {
+                  infoWindow.open(map, marker);
+                });
+            })
         });
 }
