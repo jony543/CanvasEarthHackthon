@@ -31,16 +31,35 @@ function initMap() {
                 '&destinations='+element.lat+","+element.lng+
                 '&key=AIzaSyDrqD2yAHvYTlBYx85GD2zCcuzxYXylkjs'
                 console.log(distanceUrl)
-//                $.getJSON(distanceUrl, function(json){
-//                });
-                var contentString = '<div id="content">'+
-                    '<div id="content_'+element.id+'">'+
-                    '</div>'+
-                    '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
-                    '<div id="bodyContent'+element.id+'">'+ element.info +'<br>'+
-                    '<a href='+element.img_url+'>show</a>'+
-                    '</div>'+
-                    '</div>';
+                var distanceNum = 100001;
+                var distanceText = '';
+                var durationText = '';
+                $.getJSON(distanceUrl, function(json){
+                    var distanceNum = json.rows.elements[0].distance.value;
+                    var distanceText = json.rows.elements[0].distance.text;
+                    var durationText = json.rows.elements[0].duration.value;
+                });
+                if (distanceNum < 1000) {
+                    var contentString = '<div id="content">'+
+                        '<div id="content_'+element.id+'">'+
+                        '</div>'+
+                        '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
+                        '<div id="bodyContent'+element.id+'">'+ element.info +'<br>'+
+                        distanceText +', ' + durationText + '<br>s'
+                        '<a href='+element.img_url+'>show</a>'+
+                        '</div>'+
+                        '</div>';
+                } else {
+                    var contentString = '<div id="content">'+
+                        '<div id="content_'+element.id+'">'+
+                        '</div>'+
+                        '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
+                        '<div id="bodyContent'+element.id+'">'+ element.info +'<br>'+
+                        '<a href='+element.img_url+'>show</a>'+
+                        '</div>'+
+                        '</div>';
+                }
+
                 var infoWindow = new google.maps.InfoWindow({
                   content: contentString
                 });
