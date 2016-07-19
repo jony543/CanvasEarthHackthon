@@ -39,6 +39,7 @@ function initMap() {
                 var marker = new google.maps.Marker({
                   position: latLng,
                   map: map,
+                  draggable: true,
                   title: element.title
                 });
                 marker.addListener('click', function() {
