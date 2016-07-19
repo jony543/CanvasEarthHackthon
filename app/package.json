@@ -1,0 +1,22 @@
+{
+  "name": "canvas_earth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jony543/CanvasEarthHackthon.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jony543/CanvasEarthHackthon/issues"
+  },
+  "homepage": "https://github.com/jony543/CanvasEarthHackthon#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
