@@ -1,9 +1,14 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var url = require('url');
+var fs = require('fs');
 
 var app = express();
 
+app.use('/web', express.static('web'));
 app.use('/', express.static('web'));
+
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -11,12 +16,32 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.post('/share', function(res, req){
+app.post('/share', function(req, res){
     var base64Data = req.body.imageData.replace(/^data:image\/png;base64,/, "");
 
-    require('fs').writeFile(req.body.name + ".png", base64Data, 'base64', function(err) {
+    var fileName = req.body.imageName.split(' ').join('_');
+
+    fs.writeFile(__dirname + '/web/resources/' + fileName + ".png", base64Data, 'base64', function(err) {
         console.log(err);
     });
+
+    fs.readFile(__dirname + '/web/resources/locations.json', 'utf8', function (err, data){
+        var j = JSON.parse(data);
+        j.locations.push({
+            "id": j.locations.length,
+            "lat": req.body.lat,
+            "lng": req.body.lng,
+            "title": req.body.imageName,
+            "info": "this is some more info",
+            "img_url": '/web/resources/' + fileName + '.png'
+        });
+
+        fs.writeFile(__dirname + '/web/resources/locations.json', JSON.stringify(j), 'utf8', function(err) {
+            console.log(err);
+        });
+    });
+
+    return res.sendStatus(200);
 });
 
 // default route

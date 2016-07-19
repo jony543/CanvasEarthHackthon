@@ -18,8 +18,8 @@
             <div style="width: 20%" id="scale"></div>
             <h3>Share it</h3>
             <div>
-                <p class="button" id="btn-download">Download</p>
-
+                <input type="text" class="form-control" id="exampleInputName2" placeholder="Name your art">
+                <button class="btn btn-default" id="btn-download">Share</button>
             </div>
         </div>
         <div class="col-md-6">
@@ -54,25 +54,21 @@
 
         var button = document.getElementById('btn-download');
         button.addEventListener('click', function (e) {
+//            debugger;
             imageSource = WILL.saveAsImage();
+            var image_name = $('#exampleInputName2').val(); // "first image";
 
             var img = document.createElement('img');
             img.src = imageSource;
             console.log(img);
 
-
-        });
-
-        $("form").submit(function(form) {
-            $.each(files, function(index, file) {
-                $.ajax({url: "/ajax-upload",
-                    type: 'POST',
-                    data: {filename: file.filename, data: imageSource},
-                    success: function(data, status, xhr) {}
-                });
+//            debugger;
+            $.ajax({url: "/share",
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({imageName: image_name, imageData: imageSource, lat: imageLat, lng: imageLon}),
+                success: function(data, status, xhr) {}
             });
-            files = [];
-            form.preventDefault();
         });
 
         var canvas = document.getElementById("canvas");
@@ -90,7 +86,7 @@
                 reader.onloadend = function () {
                     // get EXIF data
                     var exif = EXIF.readFromBinaryFile(this.result); //new BinaryFile(this.result));
-
+//                    debugger;
                     if (exif) {
                         var lat = exif.GPSLatitude;
                         var lon = exif.GPSLongitude;
@@ -104,6 +100,8 @@
 
                             imageHeight = exif.PixelYDimension;
                             imageWidth = exif.PixelXDimension;
+                            imageLat = lat;
+                            imageLon = lon;
 
                             var urlReader = new FileReader();
                             urlReader.onload = function(event){
