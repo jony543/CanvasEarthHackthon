@@ -1,1 +1,135 @@
-<h1>Fuck</h1>
+<div id="createDiv">
+    <script type="text/javascript-lazy" src="../js/will/scripts/js.ext.js"></script>
+    <script type="text/javascript-lazy" src="../js/will/scripts/js.ext.dom.js"></script>
+
+    <script type="text/javascript-lazy" src="../js/will/engine/Module.js"></script>
+    <script async type="text/javascript-lazy" src="../js/will/engine/WacomInkEngine.js"></script>
+
+    <script type="text/javascript-lazy" src="../js/exif.js"></script>
+    <script type="text/javascript-lazy" src="../js/ink.js"></script>
+
+    <canvas id="canvas" oncontextmenu="event.preventDefault();"></canvas>
+
+    <h2>Pick A Canvas</h2>
+    <p>Ink Engine Setup (Configure layer, brush, path builder)</p>
+    <input type="file" id="files" accept="image/*"/>
+    <div style="width: 20%" id="scale"></div>
+
+    <div>
+        <h3>Select Brush</h3>
+        <div>
+            <div id="red"></div>
+            <div id="green"></div>
+            <div id="blue"></div>
+
+            <div id="swatch" class="ui-widget-content ui-corner-all"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Great success! All the File APIs are supported.
+        } else {
+            alert('The File APIs are not fully supported in this browser.');
+        }
+
+        var imageLat;
+        var imageLon;
+        var imageScale = 0.2;
+        var imageUrl;
+        var imageHeight;
+        var imageWidth;
+
+        var canvas = document.getElementById("canvas");
+
+        // detect a change in a file input with an id of “the-file-input”
+        $("#files").change(function() {
+            //Get the photo from the input form
+            var input = document.getElementById('files');
+            var files = input.files;
+            for(var i = 0; i < files.length; i++)
+            {
+                var file = files[0];
+                var reader = new FileReader; // use HTML5 file reader to get the file
+
+                reader.onloadend = function () {
+                    // get EXIF data
+                    var exif = EXIF.readFromBinaryFile(this.result); //new BinaryFile(this.result));
+
+                    if (exif) {
+                        var lat = exif.GPSLatitude;
+                        var lon = exif.GPSLongitude;
+
+                        if (lat && lon) {
+                            //Convert coordinates to WGS84 decimal
+                            var latRef = exif.GPSLatitudeRef || "N";
+                            var lonRef = exif.GPSLongitudeRef || "W";
+                            lat = (lat[0] + lat[1] / 60 + lat[2] / 3600) * (latRef == "N" ? 1 : -1);
+                            lon = (lon[0] + lon[1] / 60 + lon[2] / 3600) * (lonRef == "W" ? -1 : 1);
+
+                            imageHeight = exif.PixelYDimension;
+                            imageWidth = exif.PixelXDimension;
+
+                            var urlReader = new FileReader();
+                            urlReader.onload = function(event){
+                                imageUrl = event.target.result;
+                                WILL.initImageLayer(imageUrl, imageWidth, imageHeight);
+                            };
+                            urlReader.readAsDataURL(file);
+
+                        } else {
+                            alert('Could not extract image geo location');
+                        }
+
+                        console.log("lat: " + lat  + " " + latRef + "; lon: " + lon + " " + lonRef);
+                    } else{
+                        alert('Could not extract image geo location');
+                        console.log(exif);
+                    }
+                };
+
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        function hexFromRGB(r, g, b) {
+            var hex = [
+                r.toString( 16 ),
+                g.toString( 16 ),
+                b.toString( 16 )
+            ];
+            $.each( hex, function( nr, val ) {
+                if ( val.length === 1 ) {
+                    hex[ nr ] = "0" + val;
+                }
+            });
+            return hex.join( "" ).toUpperCase();
+        }
+        function refreshSwatch() {
+            var red = $( "#red" ).slider( "value" ),
+                    green = $( "#green" ).slider( "value" ),
+                    blue = $( "#blue" ).slider( "value" ),
+                    hex = hexFromRGB( red, green, blue );
+            $( "#swatch" ).css( "background-color", "#" + hex );
+            WILL.color = Module.Color.from(red, green, blue);
+            if (WILL.strokeRenderer) {
+                WILL.strokeRenderer.configure({brush: WILL.brush, color: WILL.color});
+            }
+        }
+
+
+        $( "#red, #green, #blue" ).slider({
+            orientation: "horizontal",
+            range: "min",
+            max: 255,
+            value: 127,
+            slide: refreshSwatch,
+            change: refreshSwatch
+        });
+        $( "#red" ).slider( "value", 255 );
+        $( "#green" ).slider( "value", 140 );
+        $( "#blue" ).slider( "value", 60 );
+
+    </script>
+</div>
