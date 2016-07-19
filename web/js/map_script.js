@@ -29,7 +29,8 @@ function initMap() {
                     '<div id="content_'+element.id+'">'+
                     '</div>'+
                     '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
-                    '<div id="bodyContent'+element.id+'">'+ element.info +
+                    '<div id="bodyContent'+element.id+'">'+ element.info + '<br>'+
+                    '<a href='+element.img_url+'>show</a>'+
                     '</div>'+
                     '</div>';
                 var infoWindow = new google.maps.InfoWindow({
