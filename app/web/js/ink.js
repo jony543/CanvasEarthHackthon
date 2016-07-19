@@ -64,6 +64,7 @@ var WILL = {
     },
 
     initImageLayer: function(url, w, h) {
+        //debugger;
         var scale = Math.min(this.canvas.height/h, this.canvas.width/w);
 
         Module.GLTools.prepareTexture(

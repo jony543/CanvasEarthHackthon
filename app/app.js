@@ -16,6 +16,12 @@ app.use(function(req, res, next) {
     next();
 });
 
+//app.get('/sphere', function(req, res){
+//    var urlParts = url.parse(req.url);
+//    var urlQuery = urlParts.search || (urlParts.query) ? '?' + urlParts.query : '';
+//    res.redirect('/web/sphere.html/' + urlQuery);
+//});
+
 app.post('/share', function(req, res){
     var base64Data = req.body.imageData.replace(/^data:image\/png;base64,/, "");
 
