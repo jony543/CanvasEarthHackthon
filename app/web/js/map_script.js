@@ -12,6 +12,8 @@ function initMap() {
               lng: position.coords.longitude
             };
             map.setCenter(pos);
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('You Are Here');
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
           });
