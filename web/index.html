@@ -15,11 +15,42 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
     <style>
     body {
         padding-top: 70px;
         /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
     }
+    #createDiv {
+        position: relative;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background-color: #252525;
+        color: white;
+    }
+    canvas {
+        border: 0px none;
+    }
+    #red, #green, #blue {
+        float: left;
+        clear: left;
+        width: 300px;
+        margin: 15px;
+    }
+    #swatch {
+        width: 120px;
+        height: 100px;
+        margin-top: 18px;
+        margin-left: 350px;
+        background-image: none;
+    }
+    #red .ui-slider-range { background: #ef2929; }
+    #red .ui-slider-handle { border-color: #ef2929; }
+    #green .ui-slider-range { background: #8ae234; }
+    #green .ui-slider-handle { border-color: #8ae234; }
+    #blue .ui-slider-range { background: #729fcf; }
+    #blue .ui-slider-handle { border-color: #729fcf; }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -74,6 +105,7 @@
     <!-- jQuery Version 2.2.4 -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="jquery.ui.touch-punch.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
