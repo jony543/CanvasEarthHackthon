@@ -1,7 +1,8 @@
 function initMap() {
         var mapDiv = document.getElementById('map');
+        var pos = {lat: 32.0648175, lng: 34.7682433,} // added default position
         var map = new google.maps.Map(mapDiv, {
-            center: {lat: 44.540, lng: -78.546},
+            center: pos,
             zoom: 8
         });
         var infoWindow = new google.maps.InfoWindow({map: map});
@@ -25,11 +26,19 @@ function initMap() {
         $.getJSON("locations.json", function(json) {
               json.locations.forEach(function(element){
                 var latLng = {lat: element.lat, lng: element.lng};
-                contentString = '<div id="content">'+
+                var distanceUrl = 'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial'+
+                '&origins='+pos.lat+","+pos.lng+
+                '&destinations='+element.lat+","+element.lng+
+                '&key=AIzaSyDrqD2yAHvYTlBYx85GD2zCcuzxYXylkjs'
+                console.log(distanceUrl)
+//                $.getJSON(distanceUrl, function(json){
+//                });
+                var contentString = '<div id="content">'+
                     '<div id="content_'+element.id+'">'+
                     '</div>'+
                     '<h3 id="firstHeading'+element.id+'" class="firstHeading">'+element.title+'</h3>'+
-                    '<div id="bodyContent'+element.id+'">'+ element.info +
+                    '<div id="bodyContent'+element.id+'">'+ element.info +'<br>'+
+                    '<a href='+element.img_url+'>show</a>'+
                     '</div>'+
                     '</div>';
                 var infoWindow = new google.maps.InfoWindow({
