@@ -16,10 +16,21 @@ app.use(function(req, res, next) {
     next();
 });
 
+//app.get('/sphere', function(req, res){
+//    var urlParts = url.parse(req.url);
+//    var urlQuery = urlParts.search || (urlParts.query) ? '?' + urlParts.query : '';
+//    res.redirect('/web/sphere.html/' + urlQuery);
+//});
+
 app.post('/share', function(req, res){
     var base64Data = req.body.imageData.replace(/^data:image\/png;base64,/, "");
 
     var fileName = req.body.imageName.split(' ').join('_');
+
+    var imageUrl = '/web/resources/' + fileName + '.png';
+    if (req.body.panorama){
+        imageUrl = '/sphere.html?imgUrl=/web/resources/' + fileName + '.png';
+    }
 
     fs.writeFile(__dirname + '/web/resources/' + fileName + ".png", base64Data, 'base64', function(err) {
         console.log(err);
@@ -33,7 +44,7 @@ app.post('/share', function(req, res){
             "lng": req.body.lng,
             "title": req.body.imageName,
             "info": "this is some more info",
-            "img_url": '/web/resources/' + fileName + '.png'
+            "img_url": imageUrl // '/web/resources/' + fileName + '.png'
         });
 
         fs.writeFile(__dirname + '/web/resources/locations.json', JSON.stringify(j), 'utf8', function(err) {

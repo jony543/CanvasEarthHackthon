@@ -20,6 +20,7 @@
             <div>
                 <input type="text" class="form-control" id="exampleInputName2" placeholder="Name your art">
                 <button class="btn btn-default" id="btn-download">Share</button>
+                <input id="isPanorma" type="checkbox"> Panorama
             </div>
         </div>
         <div class="col-md-6">
@@ -57,6 +58,7 @@
 //            debugger;
             imageSource = WILL.saveAsImage();
             var image_name = $('#exampleInputName2').val(); // "first image";
+            var isPanorma = $('#isPanorma').val();
 
             var img = document.createElement('img');
             img.src = imageSource;
@@ -66,9 +68,13 @@
             $.ajax({url: "/share",
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({imageName: image_name, imageData: imageSource, lat: imageLat, lng: imageLon}),
-                success: function(data, status, xhr) {}
+                data: JSON.stringify({imageName: image_name, imageData: imageSource, lat: imageLat, lng: imageLon, panorama: isPanorma}),
+                success: function(data, status, xhr) {
+                    alert("published your picture");
+                    location.reload();
+                }
             });
+
         });
 
         var canvas = document.getElementById("canvas");
@@ -86,6 +92,9 @@
                 reader.onloadend = function () {
                     // get EXIF data
                     var exif = EXIF.readFromBinaryFile(this.result); //new BinaryFile(this.result));
+                    if (!exif){
+
+                    }
 //                    debugger;
                     if (exif) {
                         var lat = exif.GPSLatitude;
@@ -98,8 +107,10 @@
                             lat = (lat[0] + lat[1] / 60 + lat[2] / 3600) * (latRef == "N" ? 1 : -1);
                             lon = (lon[0] + lon[1] / 60 + lon[2] / 3600) * (lonRef == "W" ? -1 : 1);
 
-                            imageHeight = exif.PixelYDimension;
-                            imageWidth = exif.PixelXDimension;
+
+//                            debugger;
+                            imageHeight = exif.PixelYDimension || exif.ImageHeight;
+                            imageWidth = exif.PixelXDimension || exif.ImageWidth;
                             imageLat = lat;
                             imageLon = lon;
 
@@ -159,6 +170,7 @@
             slide: refreshSwatch,
             change: refreshSwatch
         });
+//        debugger;
         $( "#red" ).slider( "value", 255 );
         $( "#green" ).slider( "value", 140 );
         $( "#blue" ).slider( "value", 60 );
