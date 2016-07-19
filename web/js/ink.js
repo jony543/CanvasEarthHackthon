@@ -5,10 +5,28 @@ var WILL = {
     init: function(width, height) {
         this.initInkEngine(width, height);
         this.initEvents();
+        //debugger;
+    },
+
+    saveAsImage: function() {
+        //debugger;
+        //var pixels = this.canvas.readPixels(Module.RectTools.create(0,0,200,200));
+        //var tmpCanvas = document.createElement('canvas');
+        //tmpCanvas.width = 200; // this.canvas.width;
+        //tmpCanvas.height = 200; //this.canvas.height;
+        //var context = tmpCanvas.getContext('2d');
+        //var imgData = context.createImageData(200,200); //this.canvas.width, this.canvas.height);
+        //imgData.data.set(pixels);
+        //
+        //document.body.appendChild(tmpCanvas);
+        //
+        //return tmpCanvas.toDataURL('image/png');
+
+        return this.canvas.surface.toDataURL('image/png');
     },
 
     initInkEngine: function(width, height) {
-        this.canvas = new Module.InkCanvas(document.getElementById("canvas"), width, height);
+        this.canvas = new Module.InkCanvas(document.getElementById("canvas"), width, height, {preserveDrawingBuffer: true});
         this.canvas.clear(this.backgroundColor);
 
         this.brush = new Module.DirectBrush();
@@ -28,27 +46,22 @@ var WILL = {
     },
 
     initEvents: function() {
+        //var self = this;
+
         var self = this;
 
-        if (window.PointerEvent) {
-            Module.canvas.addEventListener("pointerdown", function(e) {self.beginStroke(e);});
-            Module.canvas.addEventListener("pointermove", function(e) {self.moveStroke(e);});
-            document.addEventListener("pointerup", function(e) {self.endStroke(e);});
-        }
-        else {
-            Module.canvas.addEventListener("mousedown", function(e) {self.beginStroke(e);});
-            Module.canvas.addEventListener("mousemove", function(e) {self.moveStroke(e);});
-            document.addEventListener("mouseup", function(e) {self.endStroke(e);});
+        $(Module.canvas).on("mousedown", function(e) {self.beginStroke(e);});
+        $(Module.canvas).on("mousemove", function(e) {self.moveStroke(e);});
+        $(document).on("mouseup", function(e) {self.endStroke(e);});
 
-            if (window.TouchEvent) {
-                Module.canvas.addEventListener("touchstart", function(e) {self.beginStroke(e);});
-                Module.canvas.addEventListener("touchmove", function(e) {self.moveStroke(e);});
-                document.addEventListener("touchend", function(e) {self.endStroke(e);});
-            }
+        Module.canvas.addEventListener("touchstart", function(e) {self.beginStroke(e);});
+        Module.canvas.addEventListener("touchmove", function(e) {self.moveStroke(e);});
+        document.addEventListener("touchend", function(e) {self.endStroke(e);});
+
+        document.ontouchmove = function(e) {
+            e.preventDefault();
         }
     },
-
-    //imageLayerTransform: undefined, // Module.MatTools.makeScale(0.2),
 
     initImageLayer: function(url, w, h) {
         var scale = Math.min(this.canvas.height/h, this.canvas.width/w);
@@ -83,8 +96,9 @@ var WILL = {
     },
 
     beginStroke: function(e) {
-        //debugger;
-        if (e.button != 0) return;
+        //if (e.button != 0) return;
+        if (["mousedown", "mouseup"].contains(e.type) && e.button != 0) return;
+        if (e.changedTouches) e = e.changedTouches[0];
 
         this.inputPhase = Module.InputPhase.Begin;
         this.pressure = this.getPressure(e);
@@ -95,26 +109,30 @@ var WILL = {
     },
 
     moveStroke: function(e) {
+        //if (!this.inputPhase) return;
         if (!this.inputPhase) return;
+        if (e.changedTouches) e = e.changedTouches[0];
 
         this.inputPhase = Module.InputPhase.Move;
         this.pointerPos = this.getXYfromMouseEvent(e); // {x: e.clientX, y: e.clientY};
         this.pressure = this.getPressure(e);
 
-        if (WILL.frameID != WILL.canvas.frameID) {
+        //if (WILL.frameID != WILL.canvas.frameID) {
             var self = this;
 
-            WILL.frameID = WILL.canvas.requestAnimationFrame(function() {
-                if (self.inputPhase && self.inputPhase == Module.InputPhase.Move) {
+            //WILL.frameID = WILL.canvas.requestAnimationFrame(function() {
+                //if (self.inputPhase && self.inputPhase == Module.InputPhase.Move) {
                     self.buildPath(self.pointerPos);
                     self.drawPath();
-                }
-            }, true);
-        }
+                //}
+            //}, true);
+        //}
     },
 
     endStroke: function(e) {
+        //if (!this.inputPhase) return;
         if (!this.inputPhase) return;
+        if (e.changedTouches) e = e.changedTouches[0];
 
         this.inputPhase = Module.InputPhase.End;
         this.pressure = this.getPressure(e);
